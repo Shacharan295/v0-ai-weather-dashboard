@@ -1,14 +1,6 @@
 "use client"
 
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts"
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 interface TwentyFourHourChartProps {
   data: { time: string; temp: number }[]
@@ -16,13 +8,19 @@ interface TwentyFourHourChartProps {
 
 export default function TwentyFourHourChart({ data }: TwentyFourHourChartProps) {
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 h-80">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 h-[370px]">
+      {/* Increased height from h-80 to h-[370px] */}
+      
       <h3 className="text-white font-bold text-xl tracking-wide mb-3 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent drop-shadow-lg">
         24-Hour Temperature Trend
       </h3>
 
-      <ResponsiveContainer width="100%" height={280}>
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+      <ResponsiveContainer width="100%" height={300}>
+        {/* Increased height inside chart */}
+        
+        <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+          {/* Added bottom margin so X-axis fits inside */}
+          
           <defs>
             <linearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.8} />
@@ -36,6 +34,8 @@ export default function TwentyFourHourChart({ data }: TwentyFourHourChartProps) 
             dataKey="time"
             stroke="rgba(255,255,255,0.7)"
             style={{ fontSize: "12px" }}
+            padding={{ left: 10, right: 10 }}
+            interval={2}
           />
 
           <YAxis
