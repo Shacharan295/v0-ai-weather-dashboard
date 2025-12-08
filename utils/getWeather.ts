@@ -17,19 +17,16 @@ function getEmoji(desc: string) {
 
 export async function getWeather(city: string) {
   try {
-    // ⭐ ALWAYS call backend first (worldwide accurate data)
     const res = await fetch(
       `${BACKEND_URL}/weather?city=${encodeURIComponent(city)}`,
       { cache: "no-store" }
     )
 
-    if (!res.ok) {
-      throw new Error("Backend failed")
-    }
+    if (!res.ok) throw new Error("Backend failed")
 
     const data = await res.json()
 
-    // ⭐ Map backend data → UI structure
+    // ⭐ Return SAME frontend structure (no UI changes needed)
     return {
       city: data.city,
       country: data.country,
@@ -49,14 +46,19 @@ export async function getWeather(city: string) {
         emoji: getEmoji(f.description),
       })),
 
+      // ⭐ FRONTEND FORMAT KEPT EXACT SAME
+      // ⭐ Missing backend fields safely mapped to null
       ai_guide: {
-        morning: data.ai_guide.morning,
-        afternoon: data.ai_guide.afternoon,
-        evening: data.ai_guide.evening,
-        safety: data.ai_guide.safety,
-        activity: data.ai_guide.activities,
+        morning: data.ai_guide.morning ?? null,
+        afternoon: data.ai_guide.afternoon ?? null,
+        evening: data.ai_guide.evening ?? null,
+        activity: data.ai_guide.activities ?? null,
+        clothing: data.ai_guide.clothing ?? null,
+
+        // ⭐ THESE THREE COME FROM BACKEND
         summary: data.ai_guide.summary,
-        clothing: data.ai_guide.clothing,
+        safety: data.ai_guide.safety,
+        insight: data.ai_guide.insight,
       },
     }
   } catch (error) {
