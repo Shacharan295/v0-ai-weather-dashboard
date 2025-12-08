@@ -27,18 +27,17 @@ export default function AIGuideSection({ guide }: AIGuideSectionProps) {
         {guides.map((item) => (
           <div
             key={item.key}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20
+            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 
             hover:bg-white/20 transition-all duration-300 transform hover:translate-y-[-4px]"
           >
-            {/* Stylish Title */}
             <h3 className="text-white font-semibold tracking-wide text-lg mb-3">
               {item.title}
             </h3>
 
-            {/* Premium Body Text */}
+            {/* FULLY JUSTIFIED TEXT */}
             <p
-              className="text-white/80 text-[15px] leading-relaxed font-light
-                         whitespace-pre-wrap break-words tracking-wide"
+              className="text-white/80 text-[15px] leading-relaxed font-light whitespace-pre-wrap break-words tracking-wide"
+              style={{ textAlign: "justify" }}
             >
               {guide[item.key]}
             </p>
