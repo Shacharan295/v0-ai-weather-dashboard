@@ -19,8 +19,10 @@ const guides = [
 export default function AIGuideSection({ guide }: AIGuideSectionProps) {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-6 drop-shadow-lg">💡 AI Weather Guide</h2>
-      
+      <h2 className="text-2xl font-bold text-white mb-6 drop-shadow-lg">
+        💡 AI Weather Guide
+      </h2>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {guides.map((item) => (
           <div
@@ -29,7 +31,9 @@ export default function AIGuideSection({ guide }: AIGuideSectionProps) {
             hover:bg-white/20 transition-all duration-300 transform hover:translate-y-[-4px]"
           >
             <h3 className="text-white font-bold mb-3">{item.title}</h3>
-            <p className="text-white/80 text-sm leading-relaxed">
+
+            {/* FIX: allow long text to wrap correctly */}
+            <p className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap break-words">
               {guide[item.key]}
             </p>
           </div>
