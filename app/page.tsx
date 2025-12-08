@@ -27,20 +27,59 @@ export default function WeatherDashboard() {
   }, [currentCity])
 
   // Background selection
-  const getBackgroundImage = () => {
-    if (!weatherData) return "/images/sunny.jpg"
-    const desc = weatherData.description.toLowerCase()
+ const getBackgroundImage = () => {
+  if (!weatherData) return "/images/default.jpg";
 
-    if (desc.includes("sun") || desc.includes("clear")) return "/images/sunny.jpg"
-    if (desc.includes("cloud")) return "/images/cloudy.jpg"
-    if (desc.includes("rain")) return "/images/rainy.jpg"
-    if (desc.includes("storm") || desc.includes("thunder")) return "/images/storm.jpg"
-    if (desc.includes("snow")) return "/images/snow.jpg"
-    if (desc.includes("fog") || desc.includes("mist") || desc.includes("haze"))
-      return "/images/partly_cloudy.jpg"
+  const desc = weatherData.description.toLowerCase();
 
-    return "/images/sunny.jpg"
+  // CLEAR
+  if (desc.includes("clear")) return "/images/clear.jpg";
+
+  // CLOUDS
+  if (desc.includes("few clouds")) return "/images/few_clouds.jpg";
+  if (desc.includes("scattered clouds")) return "/images/scattered_clouds.jpg";
+  if (desc.includes("broken clouds")) return "/images/broken_clouds.jpg";
+  if (desc.includes("overcast")) return "/images/overcast.jpg";
+
+  // RAIN
+  if (desc.includes("freezing rain")) return "/images/freezing_rain.jpg";
+  if (desc.includes("light rain")) return "/images/light_rain.jpg";
+  if (desc.includes("moderate rain")) return "/images/moderate_rain.jpg";
+  if (desc.includes("heavy rain")) return "/images/heavy_rain.jpg";
+  if (desc.includes("rain")) return "/images/rainy.jpg";
+
+  // DRIZZLE
+  if (desc.includes("drizzle")) return "/images/drizzle.jpg";
+
+  // THUNDERSTORM
+  if (desc.includes("thunderstorm")) return "/images/thunderstorm.jpg";
+
+  // SNOW
+  if (desc.includes("light snow")) return "/images/light_snow.jpg";
+  if (desc.includes("heavy snow")) return "/images/heavy_snow.jpg";
+  if (desc.includes("snow")) return "/images/snow.jpg";
+  if (desc.includes("sleet")) return "/images/sleet.jpg";
+
+  // FOG / MIST / HAZE / DUST
+  if (
+    desc.includes("fog") ||
+    desc.includes("mist") ||
+    desc.includes("haze") ||
+    desc.includes("smoke") ||
+    desc.includes("dust") ||
+    desc.includes("sand")
+  ) {
+    return "/images/fog.jpg";
   }
+
+  // EXTREME
+  if (desc.includes("tornado") || desc.includes("squall"))
+    return "/images/extreme.jpg";
+
+  // FALLBACK
+  return "/images/default.jpg";
+};
+
 
   // Temporary 24-hour temperature generator
   const generate24HourData = () => {
