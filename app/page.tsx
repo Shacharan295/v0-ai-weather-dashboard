@@ -55,12 +55,13 @@ export default function WeatherDashboard() {
 
   // ⭐ NEW → Only 3 AI guide fields
   const guideForUI = weatherData
-    ? {
-        summary: weatherData.ai_guide.summary,
-        safety: weatherData.ai_guide.safety,
-        activity: weatherData.ai_guide.activity,
-      }
-    : null
+  ? {
+      summary: weatherData.ai_guide.summary,
+      safety: weatherData.ai_guide.safety,
+      insight: weatherData.ai_guide.insight,
+    }
+  : null
+
 
   return (
     <main
