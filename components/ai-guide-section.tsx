@@ -12,7 +12,7 @@ interface AIGuideSectionProps {
 
 const guides = [
   { title: "Cast Today", key: "summary" as const },
-  { title: "Safety Today", key: "safety" as const },
+  { title: "Safety Concern", key: "safety" as const },
   { title: "Climate Insight", key: "insight" as const },
 ]
 
