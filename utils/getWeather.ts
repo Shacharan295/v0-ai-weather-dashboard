@@ -5,52 +5,43 @@ const BACKEND_URL =
 
 // ⭐ Convert backend description → emoji
 function getEmoji(desc: string) {
-  const d = desc.toLowerCase();
+  const d = desc.toLowerCase()
 
-  // Clear
-  if (d.includes("clear")) return "☀️";
+  // ☀️ CLEAR
+  if (d.includes("clear")) return "☀️"
 
-  // Clouds
-  if (d.includes("few clouds")) return "🌤️";
-  if (d.includes("scattered clouds")) return "⛅";
-  if (d.includes("broken clouds")) return "🌥️";
-  if (d.includes("overcast")) return "☁️";
+  // 🌤️ FEW CLOUDS
+  if (d.includes("few clouds")) return "🌤️"
 
-  // Rain
-  if (d.includes("freezing rain")) return "🧊🌧️";
-  if (d.includes("light rain")) return "🌦️";
-  if (d.includes("moderate rain")) return "🌧️";
-  if (d.includes("heavy rain")) return "🌧️🌧️";
-  if (d.includes("rain")) return "🌧️";
+  // ⛅ SCATTERED CLOUDS
+  if (d.includes("scattered clouds")) return "⛅"
 
-  // Drizzle
-  if (d.includes("drizzle")) return "🌦️";
+  // 🌥️ BROKEN CLOUDS
+  if (d.includes("broken clouds")) return "🌥️"
 
-  // Thunderstorm
-  if (d.includes("thunderstorm")) return "⛈️";
+  // ☁️ OVERCAST CLOUDS
+  if (d.includes("overcast")) return "☁️"
 
-  // Snow
-  if (d.includes("light snow")) return "🌨️";
-  if (d.includes("heavy snow")) return "❄️❄️";
-  if (d.includes("snow")) return "❄️";
-  if (d.includes("sleet")) return "🌨️🧊";
+  // 🌧️ LIGHT RAIN
+  if (d.includes("light rain")) return "🌦️"
 
-  // Fog / Mist / Haze / Dust
-  if (
-    d.includes("fog") ||
-    d.includes("mist") ||
-    d.includes("haze") ||
-    d.includes("smoke") ||
-    d.includes("dust") ||
-    d.includes("sand")
-  ) return "🌫️";
+  // 🌧️ MODERATE / HEAVY RAIN
+  if (d.includes("moderate rain") || d.includes("heavy rain")) return "🌧️"
 
-  // Tornado / Squall
-  if (d.includes("tornado") || d.includes("squall")) return "🌪️";
+  // ⛈️ THUNDERSTORM
+  if (d.includes("thunder")) return "⛈️"
 
-  // Fallback
-  return "🌡️";
+  // ❄️ SNOW TYPES
+  if (d.includes("light snow")) return "🌨️"
+  if (d.includes("snow")) return "❄️"
+
+  // 🌫️ FOG / MIST / HAZE
+  if (d.includes("fog") || d.includes("mist") || d.includes("haze")) return "🌫️"
+
+  // DEFAULT
+  return "🌡️"
 }
+
 
 export async function getWeather(city: string) {
   try {
