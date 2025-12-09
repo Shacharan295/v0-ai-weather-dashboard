@@ -3,7 +3,7 @@ const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   "https://weather-backend-e8cz.onrender.com"
 
-// ⭐ Convert backend description → emoji
+// ⭐ Convert backend description → emoji (FULLY FIXED)
 function getEmoji(desc: string) {
   const d = desc.toLowerCase()
 
@@ -19,29 +19,37 @@ function getEmoji(desc: string) {
   // 🌥️ BROKEN CLOUDS
   if (d.includes("broken clouds")) return "🌥️"
 
-  // ☁️ OVERCAST CLOUDS
+  // ☁️ OVERCAST
   if (d.includes("overcast")) return "☁️"
 
-  // 🌧️ LIGHT RAIN
+  // ☁️ ANY CLOUDS
+  if (d.includes("cloud")) return "☁️"
+
+  // 🌦️ LIGHT RAIN
   if (d.includes("light rain")) return "🌦️"
 
   // 🌧️ MODERATE / HEAVY RAIN
   if (d.includes("moderate rain") || d.includes("heavy rain")) return "🌧️"
 
-  // ⛈️ THUNDERSTORM
+  // 🌧️ ANY RAIN
+  if (d.includes("rain")) return "🌧️"
+
+  // ⛈️ THUNDER
   if (d.includes("thunder")) return "⛈️"
 
-  // ❄️ SNOW TYPES
+  // 🌨️ LIGHT SNOW
   if (d.includes("light snow")) return "🌨️"
+
+  // ❄️ SNOW
   if (d.includes("snow")) return "❄️"
 
-  // 🌫️ FOG / MIST / HAZE
-  if (d.includes("fog") || d.includes("mist") || d.includes("haze")) return "🌫️"
+  // 🌫️ Mist / Fog / Haze
+  if (d.includes("fog") || d.includes("mist") || d.includes("haze"))
+    return "🌫️"
 
-  // DEFAULT
+  // Default
   return "🌡️"
 }
-
 
 export async function getWeather(city: string) {
   try {
@@ -54,7 +62,6 @@ export async function getWeather(city: string) {
 
     const data = await res.json()
 
-    // ⭐ Return SAME frontend structure (no UI changes needed)
     return {
       city: data.city,
       country: data.country,
@@ -67,6 +74,7 @@ export async function getWeather(city: string) {
       wind_mood: data.wind_mood,
       local_time: data.local_time,
 
+      // ⭐ FORECAST ARRAY (FULL FIX: uses desc + emoji)
       forecast: (data.forecast || []).map((f: any) => ({
         day: f.day,
         temp: f.temp,
@@ -74,8 +82,7 @@ export async function getWeather(city: string) {
         emoji: getEmoji(f.description),
       })),
 
-      // ⭐ FRONTEND FORMAT KEPT EXACT SAME
-      // ⭐ Missing backend fields safely mapped to null
+      // ⭐ AI GUIDE (kept same)
       ai_guide: {
         morning: data.ai_guide.morning ?? null,
         afternoon: data.ai_guide.afternoon ?? null,
@@ -83,7 +90,6 @@ export async function getWeather(city: string) {
         activity: data.ai_guide.activities ?? null,
         clothing: data.ai_guide.clothing ?? null,
 
-        // ⭐ THESE THREE COME FROM BACKEND
         summary: data.ai_guide.summary,
         safety: data.ai_guide.safety,
         insight: data.ai_guide.insight,
