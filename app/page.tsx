@@ -3,19 +3,19 @@
 import { useState, useEffect } from "react"
 import { getWeather, type WeatherData } from "@/utils/getWeather"
 
-import SearchBox from "@/components/SearchBox"   // ✅ replaced SearchBar
+import SearchBox from "@/components/SearchBox"
 import CurrentWeather from "@/components/current-weather"
 import ForecastCards from "@/components/forecast-cards"
 import AIGuideSection from "@/components/ai-guide-section"
 import TwentyFourHourChart from "@/components/twenty-four-hour-chart"
 import WeatherPersonalityCard from "@/components/weather-personality-card"
-import Image from "next/image";
+import Image from "next/image"
 
 export default function WeatherDashboard() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentCity, setCurrentCity] = useState("New York")
-  const [suggestions, setSuggestions] = useState<string[] | null>(null)   // ✅ NEW state
+  const [suggestions, setSuggestions] = useState<string[] | null>(null)
 
   // 🔥 Combined search: autocomplete + auto-correct
   async function fetchWeather(city: string) {
@@ -25,7 +25,6 @@ export default function WeatherDashboard() {
     const res = await fetch(`/api/weather?city=${city}`)
     const data = await res.json()
 
-    // ❗ If backend returns city_not_found → show suggestions
     if (data.error === "city_not_found") {
       setWeatherData(null)
       setSuggestions(data.suggestions)
@@ -33,7 +32,6 @@ export default function WeatherDashboard() {
       return
     }
 
-    // Valid weather response
     setWeatherData(data)
     setCurrentCity(city)
     setLoading(false)
@@ -43,7 +41,6 @@ export default function WeatherDashboard() {
     fetchWeather(currentCity)
   }, [])
 
-  // Background selection
   const getBackgroundImage = () => {
     if (!weatherData) return "/images/default.jpg"
 
@@ -65,6 +62,7 @@ export default function WeatherDashboard() {
     if (desc.includes("heavy snow")) return "/images/heavy_snow.jpg"
     if (desc.includes("snow")) return "/images/snow.jpg"
     if (desc.includes("sleet")) return "/images/sleet.jpg"
+
     if (
       desc.includes("fog") ||
       desc.includes("mist") ||
@@ -80,7 +78,6 @@ export default function WeatherDashboard() {
     return "/images/default.jpg"
   }
 
-  // Temporary 24-hour temperature generator
   const generate24HourData = () => {
     const list = []
     for (let i = 0; i < 24; i++) {
@@ -108,15 +105,26 @@ export default function WeatherDashboard() {
     >
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
-        <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-6">
-          🌍 Climocast
-        </h1>
+
+        {/* ✅ REPLACED EMOJI WITH YOUR LOGO */}
+        <div className="flex items-center gap-3 mb-6">
+          <Image
+            src="/climocast-icon.png"   // <-- your file name
+            width={50}
+            height={50}
+            alt="Climocast Logo"
+            className="rounded-xl"
+          />
+          <h1 className="text-4xl font-bold text-white drop-shadow-lg">
+            Climocast
+          </h1>
+        </div>
 
         {/* 🔥 Combined Search Box */}
         <SearchBox onSearch={fetchWeather} />
       </div>
 
-      {/* ❗ Auto-correct suggestion UI */}
+      {/* Auto-correct UI */}
       {suggestions && (
         <div className="max-w-7xl mx-auto text-white mb-6">
           <p className="text-lg mb-2">Did you mean:</p>
@@ -146,7 +154,7 @@ export default function WeatherDashboard() {
         </div>
       ) : weatherData ? (
         <div className="max-w-7xl mx-auto space-y-10">
-          {/* MAIN GRID */}
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
               <CurrentWeather data={weatherData} />
@@ -173,7 +181,6 @@ export default function WeatherDashboard() {
             </div>
           </div>
 
-          {/* AI GUIDE */}
           {guideForUI && <AIGuideSection guide={guideForUI} />}
         </div>
       ) : (
