@@ -59,7 +59,7 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
         {/* Large Temperature Display */}
         <div className="text-center py-8">
           <div className="text-7xl mb-4">{getWeatherEmoji()}</div>
-          <div className="text-6xl font-bold text-white">{data.temp}°</div>
+          <div className="text-6xl font-bold text-white">{data.temp}°C</div>
           <p className="text-white/90 text-lg mt-2">{data.description}</p>
         </div>
 
