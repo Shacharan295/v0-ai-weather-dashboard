@@ -30,12 +30,12 @@ export default function ForecastCards({ forecast }: ForecastCardsProps) {
               {item.day}
             </p>
 
-            {/* ⭐ WEATHER EMOJI */}
+            {/* ⭐ EMOJI */}
             <div className="text-4xl mb-2">
               {item.emoji || "🌡️"}
             </div>
 
-            {/* TEMP */}
+            {/* TEMPERATURE */}
             <p className="text-white text-lg font-bold mb-1">
               {Math.round(item.temp)}°C
             </p>
