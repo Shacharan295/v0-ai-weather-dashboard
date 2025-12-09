@@ -1,3 +1,5 @@
+"use client"
+
 interface WeatherPersonalityCardProps {
   city: string;
   temp: number;
@@ -18,9 +20,16 @@ export default function WeatherPersonalityCard({
   aqi_label = null,
 }: WeatherPersonalityCardProps) {
 
-  const getPersonality = (): string => {
-    const City = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+  // ---------- City Capitalization ----------
+  function formatCity(name: string) {
+    return name
+      .split(" ")
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+  }
+  const City = formatCity(city);
 
+  const getPersonality = (): string => {
     const cat = category.toLowerCase();
     const isSunny = cat.includes("sun") || cat.includes("clear");
     const isCloudy = cat.includes("cloud");
@@ -34,6 +43,9 @@ export default function WeatherPersonalityCard({
     const isWarm = temp > 20;
     const isHot = temp > 32;
 
+    // ---------------------------------------
+    // CINEMATIC MOOD TEXT POOLS (A + C blend)
+    // ---------------------------------------
     const sunnyCold = [
       `${City} feels calm and luminous today, the cold air sharpening every detail.`,
       `A quiet winter clarity settles over ${City}, bright skies opening the day.`,
@@ -119,15 +131,18 @@ export default function WeatherPersonalityCard({
       `A grounded stillness moves through ${City}, everything feeling naturally in place.`,
     ];
 
+    const polluted = [
+      `${City} feels muted today, the air carrying a noticeable heaviness.`,
+      `A subdued atmosphere settles over ${City}, the light softened by the air.`,
+      `${City} moves in quieter tones today, the air giving the day a gentle restraint.`,
+    ];
+
+    // AQI override
     if (aqi !== null && aqi >= 4) {
-      const polluted = [
-        `${City} feels muted today, the air carrying a noticeable heaviness.`,
-        `A subdued atmosphere settles over ${City}, the light softened by the air.`,
-        `${City} moves in quieter tones today, the air giving the day a gentle restraint.`,
-      ];
       return polluted[Math.floor(Math.random() * polluted.length)];
     }
 
+    // Weather Logic
     if (isSunny) {
       if (isCold) return sunnyCold[Math.floor(Math.random() * sunnyCold.length)];
       if (isWarm) return sunnyWarm[Math.floor(Math.random() * sunnyWarm.length)];
@@ -136,10 +151,9 @@ export default function WeatherPersonalityCard({
     }
 
     if (isCloudy) return cloudy[Math.floor(Math.random() * cloudy.length)];
-    if (isRainy)
-      return isHumid
-        ? rainyHumid[Math.floor(Math.random() * rainyHumid.length)]
-        : rainy[Math.floor(Math.random() * rainy.length)];
+    if (isRainy) return isHumid
+      ? rainyHumid[Math.floor(Math.random() * rainyHumid.length)]
+      : rainy[Math.floor(Math.random() * rainy.length)];
     if (isStormy) return stormy[Math.floor(Math.random() * stormy.length)];
     if (isSnowy) return snowy[Math.floor(Math.random() * snowy.length)];
     if (isFoggy) return foggy[Math.floor(Math.random() * foggy.length)];
@@ -151,20 +165,24 @@ export default function WeatherPersonalityCard({
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 text-white space-y-2">
-      <h4 className="text-white font-bold text-xl tracking-wide mb-3">
-        {city.charAt(0).toUpperCase() + city.slice(1).toLowerCase()}'s Mood
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 text-white space-y-4 shadow-lg hover:bg-white/20 transition-all duration-300">
+      
+      <h4 className="
+        text-2xl font-extrabold tracking-wide mb-3 
+        bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent
+        drop-shadow-xl
+      ">
+        {City}'s Mood
       </h4>
 
-      <p className="text-sm leading-relaxed text-white/90 italic font-light">
+      <p className="text-[16px] leading-relaxed text-white/90 italic font-light tracking-wide">
         {getPersonality()}
       </p>
 
-      <div className="pt-2 flex gap-4 text-xs text-white/70">
+      <div className="pt-3 flex gap-4 text-sm text-white/80">
         <span>🌡️ {temp}°C</span>
         <span>💨 {wind} km/h</span>
         <span>💧 {humidity}%</span>
-
         {aqi !== null && (
           <span>🌫️ AQI: {aqi} {aqi_label ? `— ${aqi_label}` : ""}</span>
         )}
