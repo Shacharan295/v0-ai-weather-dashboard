@@ -17,12 +17,15 @@ export default function WeatherDashboard() {
   const [currentCity, setCurrentCity] = useState("New York")
   const [suggestions, setSuggestions] = useState<string[] | null>(null)
 
-  // 🔥 Combined search: autocomplete + auto-correct
+  // --- FIXED: Now uses backend directly ---
   async function fetchWeather(city: string) {
     setLoading(true)
     setSuggestions(null)
 
-    const res = await fetch(`/api/weather?city=${city}`)
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/weather?city=${city}`
+    );
+
     const data = await res.json()
 
     if (data.error === "city_not_found") {
@@ -62,7 +65,6 @@ export default function WeatherDashboard() {
     if (desc.includes("heavy snow")) return "/images/heavy_snow.jpg"
     if (desc.includes("snow")) return "/images/snow.jpg"
     if (desc.includes("sleet")) return "/images/sleet.jpg"
-
     if (
       desc.includes("fog") ||
       desc.includes("mist") ||
@@ -106,10 +108,10 @@ export default function WeatherDashboard() {
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
 
-        {/* ✅ REPLACED EMOJI WITH YOUR LOGO */}
+        {/* Logo */}
         <div className="flex items-center gap-3 mb-6">
           <Image
-            src="/climocast-icon.png"   // <-- your file name
+            src="/climocast-icon.png"
             width={50}
             height={50}
             alt="Climocast Logo"
@@ -120,7 +122,7 @@ export default function WeatherDashboard() {
           </h1>
         </div>
 
-        {/* 🔥 Combined Search Box */}
+        {/* Search Box */}
         <SearchBox onSearch={fetchWeather} />
       </div>
 
