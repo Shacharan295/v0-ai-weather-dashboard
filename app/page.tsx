@@ -9,6 +9,7 @@ import ForecastCards from "@/components/forecast-cards"
 import AIGuideSection from "@/components/ai-guide-section"
 import TwentyFourHourChart from "@/components/twenty-four-hour-chart"
 import WeatherPersonalityCard from "@/components/weather-personality-card"
+import Image from "next/image";
 
 export default function WeatherDashboard() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
