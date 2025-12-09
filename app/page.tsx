@@ -9,7 +9,7 @@ import TwentyFourHourChart from "@/components/twenty-four-hour-chart"
 import WeatherPersonalityCard from "@/components/weather-personality-card"
 import Image from "next/image"
 
-// ⭐ Emoji Converter (required fix)
+// ⭐ Emoji Converter
 function getEmoji(desc: string) {
   const d = desc.toLowerCase()
 
@@ -36,7 +36,6 @@ export default function WeatherDashboard() {
   const [currentCity, setCurrentCity] = useState("New York")
   const [suggestions, setSuggestions] = useState<string[] | null>(null)
 
-  // ⭐ FIXED FETCH FUNCTION — Proper forecast mapping
   async function fetchWeather(city: string) {
     setLoading(true)
     setSuggestions(null)
@@ -54,7 +53,6 @@ export default function WeatherDashboard() {
       return
     }
 
-    // ⭐ Transform forecast → add desc + emoji
     const fixedForecast = data.forecast.map((f: any) => ({
       day: f.day,
       temp: f.temp,
@@ -62,7 +60,6 @@ export default function WeatherDashboard() {
       emoji: getEmoji(f.description),
     }))
 
-    // ⭐ Insert corrected forecast
     setWeatherData({
       ...data,
       forecast: fixedForecast,
@@ -76,7 +73,6 @@ export default function WeatherDashboard() {
     fetchWeather(currentCity)
   }, [])
 
-  // BACKGROUND SELECTION — UNCHANGED
   const getBackgroundImage = () => {
     if (!weatherData) return "/images/default.jpg"
     const desc = weatherData.description.toLowerCase()
@@ -112,7 +108,6 @@ export default function WeatherDashboard() {
     return "/images/default.jpg"
   }
 
-  // TEMPORARY HOURLY DATA — UNCHANGED
   const generate24HourData = () => {
     const list = []
     for (let i = 0; i < 24; i++) {
@@ -138,9 +133,7 @@ export default function WeatherDashboard() {
       className="min-h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000 p-6"
       style={{ backgroundImage: `url(${getBackgroundImage()})` }}
     >
-      {/* HEADER */}
       <div className="max-w-7xl mx-auto mb-8">
-        {/* Logo */}
         <div className="flex items-center gap-3 mb-6">
           <Image
             src="/climocast-icon.png"
@@ -154,11 +147,9 @@ export default function WeatherDashboard() {
           </h1>
         </div>
 
-        {/* Search Box */}
         <SearchBox onSearch={fetchWeather} />
       </div>
 
-      {/* AUTO-CORRECT UI */}
       {suggestions && (
         <div className="max-w-7xl mx-auto text-white mb-6">
           <p className="text-lg mb-2">Did you mean:</p>
@@ -176,7 +167,6 @@ export default function WeatherDashboard() {
         </div>
       )}
 
-      {/* LOADING */}
       {loading ? (
         <div className="max-w-7xl mx-auto animate-pulse space-y-6">
           <div className="h-64 bg-white/20 rounded-2xl" />
@@ -188,38 +178,28 @@ export default function WeatherDashboard() {
         </div>
       ) : weatherData ? (
         <div className="max-w-7xl mx-auto space-y-10">
-          {/* MAIN GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
               <CurrentWeather data={weatherData} />
             </div>
 
             <div className="lg:col-span-2 flex flex-col gap-8">
-              <div className="w-full">
-                <ForecastCards forecast={weatherData.forecast} />
-              </div>
+              <ForecastCards forecast={weatherData.forecast} />
 
-              <div className="w-full">
-                <TwentyFourHourChart data={hourlyData} />
-              </div>
+              <TwentyFourHourChart data={hourlyData} />
 
-              <div className="w-full">
-                 <WeatherPersonalityCard
-                    city={currentCity}
-                     temp={weatherData.temp}
-                      category={weatherData.description}
-                      wind={weatherData.wind_speed}
-                      humidity={weatherData.humidity}
-                      mood={weatherData.ai_guide.mood}                     // ⭐ NEW
-                      aqi={weatherData.air_quality?.aqi}                   // ⭐ NEW
-                      aqi_label={weatherData.air_quality?.label} 
-  
-                />
-              </div>
+              <WeatherPersonalityCard
+                city={currentCity}
+                temp={weatherData.temp}
+                category={weatherData.description}
+                wind={weatherData.wind_speed}
+                humidity={weatherData.humidity}
+                aqi={weatherData.air_quality?.aqi ?? null}
+                aqi_label={weatherData.air_quality?.label ?? null}
+              />
             </div>
           </div>
 
-          {/* AI GUIDE */}
           {guideForUI && <AIGuideSection guide={guideForUI} />}
         </div>
       ) : (
