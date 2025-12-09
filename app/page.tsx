@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getWeather, type WeatherData } from "@/utils/getWeather"
-
 import SearchBox from "@/components/SearchBox"
 import CurrentWeather from "@/components/current-weather"
 import ForecastCards from "@/components/forecast-cards"
@@ -11,20 +9,41 @@ import TwentyFourHourChart from "@/components/twenty-four-hour-chart"
 import WeatherPersonalityCard from "@/components/weather-personality-card"
 import Image from "next/image"
 
+// ⭐ Emoji Converter (required fix)
+function getEmoji(desc: string) {
+  const d = desc.toLowerCase()
+
+  if (d.includes("clear")) return "☀️"
+  if (d.includes("few clouds")) return "🌤️"
+  if (d.includes("scattered clouds")) return "⛅"
+  if (d.includes("broken clouds")) return "🌥️"
+  if (d.includes("overcast")) return "☁️"
+  if (d.includes("cloud")) return "☁️"
+  if (d.includes("light rain")) return "🌦️"
+  if (d.includes("moderate rain") || d.includes("heavy rain")) return "🌧️"
+  if (d.includes("rain")) return "🌧️"
+  if (d.includes("thunder")) return "⛈️"
+  if (d.includes("light snow")) return "🌨️"
+  if (d.includes("snow")) return "❄️"
+  if (d.includes("fog") || d.includes("mist") || d.includes("haze")) return "🌫️"
+
+  return "🌡️"
+}
+
 export default function WeatherDashboard() {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
+  const [weatherData, setWeatherData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [currentCity, setCurrentCity] = useState("New York")
   const [suggestions, setSuggestions] = useState<string[] | null>(null)
 
-  // --- FIXED: Now uses backend directly ---
+  // ⭐ FIXED FETCH FUNCTION — Proper forecast mapping
   async function fetchWeather(city: string) {
     setLoading(true)
     setSuggestions(null)
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/weather?city=${city}`
-    );
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/weather?city=${encodeURIComponent(city)}`
+    )
 
     const data = await res.json()
 
@@ -35,7 +54,20 @@ export default function WeatherDashboard() {
       return
     }
 
-    setWeatherData(data)
+    // ⭐ Transform forecast → add desc + emoji
+    const fixedForecast = data.forecast.map((f: any) => ({
+      day: f.day,
+      temp: f.temp,
+      desc: f.description,
+      emoji: getEmoji(f.description),
+    }))
+
+    // ⭐ Insert corrected forecast
+    setWeatherData({
+      ...data,
+      forecast: fixedForecast,
+    })
+
     setCurrentCity(city)
     setLoading(false)
   }
@@ -44,9 +76,9 @@ export default function WeatherDashboard() {
     fetchWeather(currentCity)
   }, [])
 
+  // BACKGROUND SELECTION — UNCHANGED
   const getBackgroundImage = () => {
     if (!weatherData) return "/images/default.jpg"
-
     const desc = weatherData.description.toLowerCase()
 
     if (desc.includes("clear")) return "/images/clear.jpg"
@@ -80,6 +112,7 @@ export default function WeatherDashboard() {
     return "/images/default.jpg"
   }
 
+  // TEMPORARY HOURLY DATA — UNCHANGED
   const generate24HourData = () => {
     const list = []
     for (let i = 0; i < 24; i++) {
@@ -105,9 +138,8 @@ export default function WeatherDashboard() {
       className="min-h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000 p-6"
       style={{ backgroundImage: `url(${getBackgroundImage()})` }}
     >
-      {/* Header */}
+      {/* HEADER */}
       <div className="max-w-7xl mx-auto mb-8">
-
         {/* Logo */}
         <div className="flex items-center gap-3 mb-6">
           <Image
@@ -126,7 +158,7 @@ export default function WeatherDashboard() {
         <SearchBox onSearch={fetchWeather} />
       </div>
 
-      {/* Auto-correct UI */}
+      {/* AUTO-CORRECT UI */}
       {suggestions && (
         <div className="max-w-7xl mx-auto text-white mb-6">
           <p className="text-lg mb-2">Did you mean:</p>
@@ -156,7 +188,7 @@ export default function WeatherDashboard() {
         </div>
       ) : weatherData ? (
         <div className="max-w-7xl mx-auto space-y-10">
-
+          {/* MAIN GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
               <CurrentWeather data={weatherData} />
@@ -183,6 +215,7 @@ export default function WeatherDashboard() {
             </div>
           </div>
 
+          {/* AI GUIDE */}
           {guideForUI && <AIGuideSection guide={guideForUI} />}
         </div>
       ) : (
