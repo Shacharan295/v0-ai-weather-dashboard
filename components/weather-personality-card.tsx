@@ -35,18 +35,13 @@ export default function WeatherPersonalityCard({
       </p>
 
       {/* ⭐ Weather stats */}
-      <div className="pt-2 flex gap-4 text-xs text-white/70">
-        <span>🌡️ {temp}°C</span>
-        <span>💨 {wind} km/h</span>
-        <span>💧 {humidity}%</span>
-      </div>
+      <div className="pt-2 flex flex-wrap gap-4 text-xs text-white/70 items-center">
+  <span>🌡️ {temp}°C</span>
+  <span>💨 {wind} km/h</span>
+  <span>💧 {humidity}%</span>
 
-      {/* ⭐ NEW — Air Quality */}
-      {aqi && aqi_label && (
-        <div className="pt-2 text-xs text-white/80">
-          <span>🌫️ AQI: {aqi} — {aqi_label}</span>
-        </div>
-      )}
-    </div>
-  )
-}
+  {typeof aqi !== "undefined" && (
+    <span>🌫️ AQI: {aqi} — {aqi_label}</span>
+  )}
+</div>
+
