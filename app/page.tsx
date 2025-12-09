@@ -204,7 +204,6 @@ export default function WeatherDashboard() {
               </div>
 
               <div className="w-full">
-                <WeatherPersonalityCard
                  <WeatherPersonalityCard
                     city={currentCity}
                      temp={weatherData.temp}
