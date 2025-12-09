@@ -205,11 +205,16 @@ export default function WeatherDashboard() {
 
               <div className="w-full">
                 <WeatherPersonalityCard
-                  city={currentCity}
-                  temp={weatherData.temp}
-                  category={weatherData.description}
-                  wind={weatherData.wind_speed}
-                  humidity={weatherData.humidity}
+                 <WeatherPersonalityCard
+                    city={currentCity}
+                     temp={weatherData.temp}
+                      category={weatherData.description}
+                      wind={weatherData.wind_speed}
+                      humidity={weatherData.humidity}
+                      mood={weatherData.ai_guide.mood}                     // ⭐ NEW
+                      aqi={weatherData.air_quality?.aqi}                   // ⭐ NEW
+                      aqi_label={weatherData.air_quality?.label} 
+                   />
                 />
               </div>
             </div>
