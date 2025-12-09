@@ -213,7 +213,7 @@ export default function WeatherDashboard() {
                       mood={weatherData.ai_guide.mood}                     // ⭐ NEW
                       aqi={weatherData.air_quality?.aqi}                   // ⭐ NEW
                       aqi_label={weatherData.air_quality?.label} 
-                   />
+  
                 />
               </div>
             </div>
