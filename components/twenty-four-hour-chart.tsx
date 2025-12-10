@@ -21,11 +21,11 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
-  // ⭐ Chart bottom (never clamp)
+  // ⭐ proper domain extending to show below-0 cleanly
   const minY = Math.floor(minTemp - 0.5);
   const maxY = Math.ceil(maxTemp + 1);
 
-  // ⭐ EVEN TICKS
+  // ⭐ EVEN spacing
   const ticks = [
     minY,
     minY + (maxY - minY) * 0.25,
@@ -40,7 +40,6 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
         24-Hour Temperature Trend
       </h2>
 
-      {/* ⭐ Responsive + centered chart */}
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
@@ -53,10 +52,9 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             </linearGradient>
           </defs>
 
-          {/* Minimal grid */}
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.18)"
+            stroke="rgba(255,255,255,0.15)"
             vertical={false}
           />
 
@@ -69,15 +67,14 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
           />
 
           <YAxis
-            stroke="rgba(255,255,255,0.9)"
             domain={[minY, maxY]}
             ticks={ticks}
+            stroke="rgba(255,255,255,0.9)"
             allowDecimals={false}
             style={{ fontSize: "13px" }}
             tickMargin={8}
           />
 
-          {/* Tooltip */}
           <Tooltip
             contentStyle={{
               backgroundColor: "rgba(20,40,80,0.65)",
@@ -89,21 +86,14 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             cursor={{ stroke: "white", strokeWidth: 1 }}
           />
 
-          {/* ⭐ REAL FILL (using linearClosed so the fill follows the curve exactly) */}
-          <Area
-            type="linearClosed"
-            dataKey="temp"
-            fill="url(#tempFill)"
-            stroke="none"
-          />
-
-          {/* ⭐ REAL CURVE LINE */}
+          {/* ⭐⭐ THE FIX — FILL ALWAYS GOES DOWN TO minY, NOT ZERO */}
           <Area
             type="monotone"
             dataKey="temp"
             stroke="#3EA8FF"
             strokeWidth={3}
-            fill="transparent"
+            fill="url(#tempFill)"
+            baseValue={minY}        // ⭐ absolute fix
           />
         </AreaChart>
       </ResponsiveContainer>
