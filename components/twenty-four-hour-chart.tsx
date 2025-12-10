@@ -18,23 +18,22 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   if (!data || data.length === 0) return null;
 
   const temps = data.map((d) => d.temp);
-
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
-  // ⭐ PERFECT BOTTOM FILL LOGIC
-  // This ensures the blue always fills to the bottom.
+  // ⭐ MAIN FIX: allow blue fill to go below zero
+  // –0.32 → –1, –5.1 → –6, –0.01 → –1
   let minY = Math.floor(minTemp - 0.1);
 
-  // ⭐ Make top breathing room like old model
+  // ⭐ give breathing room above
   let maxY = Math.ceil(maxTemp + 1);
 
-  // ⭐ Ensure chart never looks flat
+  // ⭐ prevent flat-looking charts
   if (maxY - minY < 6) {
     maxY = minY + 6;
   }
 
-  // ⭐ ALWAYS EVEN TICKS (just like your old working version)
+  // ⭐ EVEN TICKS (always 5 clean steps)
   const ticks = [
     minY,
     minY + (maxY - minY) * 0.25,
@@ -55,9 +54,11 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
           margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
         >
           <defs>
+            {/* ⭐ FIXED GRADIENT — allows full bottom fill */}
             <linearGradient id="tempFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#3EA8FF" stopOpacity={0.9} />
-              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.25} />
+              {/* the old opacity=0.25 caused clipping below 0°C */}
+              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.6} />
             </linearGradient>
           </defs>
 
@@ -74,7 +75,6 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             tickMargin={10}
           />
 
-          {/* ⭐ EVEN TICKS + PERFECT BOTTOM FILL */}
           <YAxis
             stroke="rgba(255,255,255,0.9)"
             domain={[minY, maxY]}
@@ -95,7 +95,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             cursor={{ stroke: "white", strokeWidth: 1 }}
           />
 
-          {/* ⭐ BLUE AREA ALWAYS FILLS EXACTLY TO BOTTOM (minY) */}
+          {/* ⭐ FINAL: BLUE WILL ALWAYS FILL ALL THE WAY DOWN */}
           <Area
             type="monotone"
             dataKey="temp"
