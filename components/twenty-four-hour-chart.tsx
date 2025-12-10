@@ -7,47 +7,35 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 
 interface ChartProps {
   data: { time: string; temp: number }[];
 }
 
-// Generate clean Y-axis ticks
-function getTicks(min: number, max: number) {
-  const ticks = [];
-
-  // Force min
-  ticks.push(min);
-
-  // Add 0 only if data crosses below and above
-  if (min < 0 && max > 0) {
-    ticks.push(0);
-  }
-
-  // Middle
-  const mid = Math.round((min + max) / 2);
-  if (!ticks.includes(mid)) ticks.push(mid);
-
-  // Force max
-  ticks.push(max);
-
-  return ticks.sort((a, b) => a - b);
-}
-
 export default function TwentyFourHourChart({ data }: ChartProps) {
   if (!data || data.length === 0) return null;
 
-  const temps = data.map(d => d.temp);
-  const minTemp = Math.min(...temps);
-  const maxTemp = Math.max(...temps);
+  // -------------------------------
+  // CLEAN, EVEN Y-AXIS
+  // -------------------------------
+  const temps = data.map((d) => d.temp);
+  const min = Math.min(...temps);
+  const max = Math.max(...temps);
 
-  // Expand slightly for breathing room
-  const safeMin = Math.floor(minTemp);
-  const safeMax = Math.ceil(maxTemp);
+  // Expand small ranges to avoid ugly flat charts
+  let minY = Math.floor(min) - 1;
+  let maxY = Math.ceil(max) + 1;
+  if (maxY - minY < 6) {
+    maxY = minY + 6;
+  }
 
-  const ticks = getTicks(safeMin, safeMax);
+  // Even 5 ticks (clean spacing)
+  const step = (maxY - minY) / 4;
+  const ticks = Array.from({ length: 5 }, (_, i) =>
+    Math.round(minY + i * step)
+  );
 
   return (
     <div className="w-full h-72 flex flex-col">
@@ -55,55 +43,65 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
         24-Hour Temperature Trend
       </h2>
 
-      <div className="flex-1">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 20, right: 20, bottom: 10, left: 20 }}>
-            <defs>
-              <linearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4DBBFF" stopOpacity={0.9} />
-                <stop offset="95%" stopColor="#1A6FFF" stopOpacity={0.2} />
-              </linearGradient>
-            </defs>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          data={data}
+          margin={{ top: 10, right: 15, left: 0, bottom: 10 }}
+        >
+          {/* BLUE fills fully to bottom */}
+          <defs>
+            <linearGradient id="tempFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3EA8FF" stopOpacity={0.9} />
+              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.25} />
+            </linearGradient>
+          </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.25)" />
+          {/* clean grid */}
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(255,255,255,0.25)"
+          />
 
-            <XAxis
-              dataKey="time"
-              stroke="rgba(255,255,255,0.9)"
-              style={{ fontSize: "13px" }}
-              tickMargin={10}
-            />
+          {/* X-axis */}
+          <XAxis
+            dataKey="time"
+            stroke="rgba(255,255,255,0.9)"
+            style={{ fontSize: "13px" }}
+            interval={0}
+            tickMargin={10}
+          />
 
-            <YAxis
-              stroke="rgba(255,255,255,0.9)"
-              style={{ fontSize: "13px" }}
-              domain={[safeMin, safeMax]}
-              ticks={ticks}
-              tickMargin={10}
-            />
+          {/* Y-axis evenly spaced */}
+          <YAxis
+            stroke="rgba(255,255,255,0.9)"
+            domain={[minY, maxY]}
+            ticks={ticks}
+            allowDecimals={false}
+            style={{ fontSize: "13px" }}
+            tickMargin={10}
+          />
 
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "rgba(20,40,80,0.75)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255,255,255,0.4)",
-                borderRadius: "12px",
-                color: "white",
-              }}
-            />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "rgba(20,40,80,0.7)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.4)",
+              borderRadius: "10px",
+              color: "white",
+            }}
+            cursor={{ stroke: "white", strokeWidth: 1 }}
+          />
 
-            <Area
-              type="monotone"
-              dataKey="temp"
-              stroke="#3EA8FF"
-              strokeWidth={3}
-              fill="url(#gradientFill)"
-              isAnimationActive={true}
-              animationDuration={800}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+          {/* The area line */}
+          <Area
+            type="monotone"
+            dataKey="temp"
+            stroke="#3EA8FF"
+            strokeWidth={3}
+            fill="url(#tempFill)"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }
