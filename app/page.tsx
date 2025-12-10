@@ -73,7 +73,14 @@ export default function WeatherDashboard() {
     fetchWeather(currentCity)
   }, [])
 
-  const hourlyData = weatherData?.hourly || []
+  // ⭐ FIX: Sort X-axis time order
+  const hourlyData =
+    weatherData?.hourly
+      ?.sort((a: any, b: any) => {
+        const t1 = parseInt(a.time.replace(":", ""));
+        const t2 = parseInt(b.time.replace(":", ""));
+        return t1 - t2;
+      }) || [];
 
   const guideForUI = weatherData
     ? {
@@ -110,7 +117,8 @@ export default function WeatherDashboard() {
       desc.includes("smoke") ||
       desc.includes("dust") ||
       desc.includes("sand")
-    ) return "/images/fog.jpg"
+    )
+      return "/images/fog.jpg"
 
     if (desc.includes("tornado") || desc.includes("squall"))
       return "/images/extreme.jpg"
@@ -176,7 +184,7 @@ export default function WeatherDashboard() {
             <div className="lg:col-span-2 flex flex-col gap-8">
               <ForecastCards forecast={weatherData.forecast} />
 
-              {/* ⭐ Frosted Glass Chart Panel — ONLY 2 REQUIRED CHANGES BELOW */}
+              {/* ⭐ Frosted Chart Panel */}
               <div
                 className="
                   bg-white/10 
@@ -184,12 +192,12 @@ export default function WeatherDashboard() {
                   rounded-2xl 
                   border border-white/20 
                   shadow-lg 
-                  p-6         /* ⭐ increase padding */
+                  p-6
                   transition-transform duration-300 
                   hover:-translate-y-1 hover:shadow-2xl
                 "
               >
-                <div className="h-72">  {/* ⭐ increase height */}
+                <div className="h-72">
                   <TwentyFourHourChart data={hourlyData} />
                 </div>
               </div>
