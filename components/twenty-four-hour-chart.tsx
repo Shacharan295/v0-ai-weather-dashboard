@@ -17,20 +17,17 @@ interface ChartProps {
 // ⭐ Clean Y-axis → NO EMPTY SPACE
 function getYAxisRange(data: { temp: number }[]) {
   const temps = data.map(d => d.temp);
-  const min = Math.min(...temps);
-  const max = Math.max(...temps);
+  const min = Math.floor(Math.min(...temps)); // round down to avoid gap
+  const max = Math.ceil(Math.max(...temps)) + 2; // small readable top space
 
-  return {
-    min: min,           // EXACT lowest temp → NO EMPTY SPACE
-    max: max + 2        // small top padding for readability
-  };
+  return { min, max };
 }
 
 export default function TwentyFourHourChart({ data }: ChartProps) {
   const { min, max } = getYAxisRange(data);
 
   return (
-    <div className="w-full h-72">
+    <div className="w-full h-72 p-4 rounded-2xl bg-white/10 backdrop-blur-md">
 
       <h2 className="text-white text-xl font-semibold mb-3 tracking-wide">
         24-Hour Temperature Trend
@@ -39,7 +36,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}  // ⭐ NO EXTRA SPACE
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}  // ⭐ chart fits panel
         >
           <defs>
             <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
@@ -53,20 +50,26 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             stroke="rgba(255,255,255,0.25)"
           />
 
-          {/* ⭐ Clean X-axis */}
+          {/* ⭐ X-axis inside panel, proper spacing */}
           <XAxis
             dataKey="time"
             stroke="rgba(255,255,255,0.9)"
             style={{ fontSize: "12px" }}
             interval={0}
             tickMargin={6}
+            axisLine={true}
+            tickLine={true}
+            padding={{ left: 0, right: 0 }}
           />
 
-          {/* ⭐ Y-axis starts at EXACT lowest temp → no empty gap */}
+          {/* ⭐ Y-axis fully visible, no gap at bottom */}
           <YAxis
             domain={[min, max]}
             stroke="rgba(255,255,255,0.9)"
             style={{ fontSize: "12px" }}
+            axisLine={true}
+            tickLine={true}
+            tickMargin={6}
           />
 
           <Tooltip
@@ -85,6 +88,8 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             stroke="#4DBBFF"
             strokeWidth={3}
             fill="url(#tempGradient)"
+            dot={{ r: 4, fill: "white" }}
+            activeDot={{ r: 6 }}
           />
         </AreaChart>
       </ResponsiveContainer>
