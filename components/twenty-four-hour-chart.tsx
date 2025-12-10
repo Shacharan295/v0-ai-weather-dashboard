@@ -15,15 +15,14 @@ interface ChartProps {
 }
 
 export default function TwentyFourHourChart({ data }: ChartProps) {
-  // Compute nice clean Y axis values
   const temps = data.map(d => d.temp);
 
-  const minY = Math.floor(Math.min(...temps) / 2) * 2 - 2;  // round down
-  const maxY = Math.ceil(Math.max(...temps) / 2) * 2 + 2;   // round up
+  const minY = Math.floor(Math.min(...temps) / 2) * 2 - 2;
+  const maxY = Math.ceil(Math.max(...temps) / 2) * 2 + 2;
 
-  // Clean tick marks: -2, 0, 2, 4, 6, 8...
-  const ticks: number[] = [];
-  for (let v = minY; v <= maxY; v += 2) ticks.push(v);
+  // Clean 3 ticks only (top, mid, bottom)
+  const midY = Math.round((minY + maxY) / 2);
+  const ticks = [maxY, midY, minY];
 
   return (
     <div className="w-full h-72 flex flex-col">
@@ -38,7 +37,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             <defs>
               <linearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#4DBBFF" stopOpacity={0.9} />
-                <stop offset="95%" stopColor="#1A6FFF" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#1A6FFF" stopOpacity={0.4} />
               </linearGradient>
             </defs>
 
@@ -49,13 +48,13 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
               domain={[minY, maxY]}
               stroke="rgba(255,255,255,0.9)"
               style={{ fontSize: "12px" }}
+              allowDataOverflow
             />
 
             <XAxis
               dataKey="time"
               stroke="rgba(255,255,255,0.9)"
               style={{ fontSize: "12px" }}
-              interval={0}
             />
 
             <Tooltip
@@ -64,7 +63,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
                 backdropFilter: "blur(12px)",
                 border: "1px solid rgba(255,255,255,0.4)",
                 borderRadius: "12px",
-                color: "white",
+                color: "white"
               }}
               cursor={{ stroke: "rgba(255,255,255,0.4)", strokeWidth: 1 }}
             />
@@ -75,6 +74,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
               stroke="#3EA8FF"
               strokeWidth={3}
               fill="url(#gradientFill)"
+              fillOpacity={1}      // FULL BLUE AREA
               isAnimationActive={true}
               animationDuration={1200}
             />
