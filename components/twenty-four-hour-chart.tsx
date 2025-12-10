@@ -21,9 +21,11 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
+  // ⭐ proper domain extending to show below-0 cleanly
   const minY = Math.floor(minTemp - 0.5);
   const maxY = Math.ceil(maxTemp + 1);
 
+  // ⭐ EVEN spacing
   const ticks = [
     minY,
     minY + (maxY - minY) * 0.25,
@@ -41,7 +43,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 10, right: 30, left: 30, bottom: 10 }} // ⭐ centered layout
+          margin={{ top: 10, right: 30, left: 30, bottom: 10 }} // balanced margins
         >
           <defs>
             <linearGradient id="tempFill" x1="0" y1="0" x2="0" y2="1">
@@ -71,6 +73,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             allowDecimals={false}
             style={{ fontSize: "13px" }}
             tickMargin={8}
+            width={40}   // ⭐ FINAL FIX: perfectly centers the chart
           />
 
           <Tooltip
@@ -90,7 +93,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             stroke="#3EA8FF"
             strokeWidth={3}
             fill="url(#tempFill)"
-            baseValue={minY} // ⭐ full bottom fill
+            baseValue={minY} // fills to true bottom
           />
         </AreaChart>
       </ResponsiveContainer>
