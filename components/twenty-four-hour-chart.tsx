@@ -21,11 +21,11 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
-  // ⭐ Perfect bottom domain (never clamp to 0)
+  // ⭐ Chart bottom (never clamp)
   const minY = Math.floor(minTemp - 0.5);
   const maxY = Math.ceil(maxTemp + 1);
 
-  // ⭐ Perfect even spacing (5 ticks)
+  // ⭐ EVEN TICKS
   const ticks = [
     minY,
     minY + (maxY - minY) * 0.25,
@@ -40,35 +40,24 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
         24-Hour Temperature Trend
       </h2>
 
+      {/* ⭐ Responsive + centered chart */}
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 10, right: 5, left: 5, bottom: 10 }}
+          margin={{ top: 10, right: 20, left: 20, bottom: 10 }}
         >
           <defs>
-            {/* 🔥 Fill gradient */}
             <linearGradient id="tempFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3EA8FF" stopOpacity={0.9} />
-              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.5} />
+              <stop offset="0%" stopColor="#3EA8FF" stopOpacity={0.85} />
+              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.35} />
             </linearGradient>
-
-            {/* 🔥 MASK fixes the fill problem permanently */}
-            <mask id="curveMask">
-              <Area
-                type="monotone"
-                dataKey="temp"
-                stroke="#ffffff"
-                strokeWidth={3}
-                fill="white"
-              />
-            </mask>
           </defs>
 
-          {/* Minimal elegant grid */}
+          {/* Minimal grid */}
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.15)"
-            vertical={false}  // ⭐ only horizontal grid lines
+            stroke="rgba(255,255,255,0.18)"
+            vertical={false}
           />
 
           <XAxis
@@ -76,17 +65,19 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             stroke="rgba(255,255,255,0.9)"
             style={{ fontSize: "13px" }}
             interval={0}
-            tickMargin={10}
+            tickMargin={8}
           />
 
           <YAxis
             stroke="rgba(255,255,255,0.9)"
             domain={[minY, maxY]}
             ticks={ticks}
+            allowDecimals={false}
             style={{ fontSize: "13px" }}
-            tickMargin={10}
+            tickMargin={8}
           />
 
+          {/* Tooltip */}
           <Tooltip
             contentStyle={{
               backgroundColor: "rgba(20,40,80,0.65)",
@@ -98,15 +89,15 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             cursor={{ stroke: "white", strokeWidth: 1 }}
           />
 
-          {/* ⭐ Actual fill (MASKED to perfect curve shape) */}
-          <rect
-            width="100%"
-            height="100%"
+          {/* ⭐ REAL FILL (using linearClosed so the fill follows the curve exactly) */}
+          <Area
+            type="linearClosed"
+            dataKey="temp"
             fill="url(#tempFill)"
-            mask="url(#curveMask)"
+            stroke="none"
           />
 
-          {/* ⭐ Smooth curve on top */}
+          {/* ⭐ REAL CURVE LINE */}
           <Area
             type="monotone"
             dataKey="temp"
