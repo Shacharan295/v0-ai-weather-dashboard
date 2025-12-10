@@ -18,25 +18,30 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   if (!data || data.length === 0) return null;
 
   const temps = data.map((d) => d.temp);
+
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
-  // ⭐ Smart, natural Y-axis padding
-  // Example: minTemp = –0.32 → minY = –2
-  //          minTemp = +2.4 → minY = 1
-  let minY = Math.floor(minTemp) - 1;
+  // ⭐ PERFECT BOTTOM FILL LOGIC
+  // This ensures the blue always fills to the bottom.
+  let minY = Math.floor(minTemp - 0.1);
 
-  // Example: maxTemp = 5 → maxY = 7
-  let maxY = Math.ceil(maxTemp) + 1;
+  // ⭐ Make top breathing room like old model
+  let maxY = Math.ceil(maxTemp + 1);
 
-  // ⭐ Ensure at least 6 degrees of vertical space
-  if (maxY - minY < 6) maxY = minY + 6;
+  // ⭐ Ensure chart never looks flat
+  if (maxY - minY < 6) {
+    maxY = minY + 6;
+  }
 
-  // ⭐ Clean, evenly spaced ticks (5 ticks)
-  const step = (maxY - minY) / 4;
-  const ticks = Array.from({ length: 5 }, (_, i) =>
-    Math.round(minY + step * i)
-  );
+  // ⭐ ALWAYS EVEN TICKS (just like your old working version)
+  const ticks = [
+    minY,
+    minY + (maxY - minY) * 0.25,
+    minY + (maxY - minY) * 0.5,
+    minY + (maxY - minY) * 0.75,
+    maxY,
+  ].map((v) => Math.round(v));
 
   return (
     <div className="w-full h-72 flex flex-col">
@@ -69,7 +74,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             tickMargin={10}
           />
 
-          {/* ⭐ Beautiful, even Y-axis */}
+          {/* ⭐ EVEN TICKS + PERFECT BOTTOM FILL */}
           <YAxis
             stroke="rgba(255,255,255,0.9)"
             domain={[minY, maxY]}
@@ -90,7 +95,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             cursor={{ stroke: "white", strokeWidth: 1 }}
           />
 
-          {/* ⭐ Fill extends perfectly down to minY */}
+          {/* ⭐ BLUE AREA ALWAYS FILLS EXACTLY TO BOTTOM (minY) */}
           <Area
             type="monotone"
             dataKey="temp"
