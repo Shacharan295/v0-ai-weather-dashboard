@@ -17,27 +17,22 @@ interface ChartProps {
 export default function TwentyFourHourChart({ data }: ChartProps) {
   if (!data || data.length === 0) return null;
 
-  // Clean Y-axis domain
   const temps = data.map((d) => d.temp);
-  const min = Math.min(...temps);
-  const max = Math.max(...temps);
+  let minY = Math.floor(Math.min(...temps)) - 1;
+  let maxY = Math.ceil(Math.max(...temps)) + 1;
 
-  // Round nicely
-  const minY = Math.floor(min) - 1;
-  const maxY = Math.ceil(max) + 1;
+  // Fix weird empty space: always at least 6 degrees range
+  if (maxY - minY < 6) {
+    maxY = minY + 6;
+  }
 
-  // Even 5 ticks
   const step = (maxY - minY) / 4;
-  const ticks = [
-    minY,
-    minY + step,
-    minY + step * 2,
-    minY + step * 3,
-    maxY,
-  ].map((v) => Math.round(v));
+  const ticks = Array.from({ length: 5 }, (_, i) =>
+    Math.round(minY + step * i)
+  );
 
   return (
-    <div className="w-full h-72 flex flex-col"> {/* FIXED HEIGHT! */}
+    <div className="w-full flex flex-col h-full">
       <h2 className="text-white text-xl font-semibold mb-3 tracking-wide">
         24-Hour Temperature Trend
       </h2>
@@ -45,12 +40,12 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 10, right: 25, left: 0, bottom: 10 }}
+          margin={{ top: 10, right: 25, left: 5, bottom: 10 }}
         >
           <defs>
             <linearGradient id="tempFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#3EA8FF" stopOpacity={0.9} />
-              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.4} />
+              <stop offset="100%" stopColor="#3EA8FF" stopOpacity={0.35} />
             </linearGradient>
           </defs>
 
@@ -71,9 +66,9 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             stroke="rgba(255,255,255,0.9)"
             domain={[minY, maxY]}
             ticks={ticks}
-            tickMargin={10}
-            style={{ fontSize: "13px" }}
             allowDecimals={false}
+            style={{ fontSize: "13px" }}
+            tickMargin={10}
           />
 
           <Tooltip
