@@ -16,10 +16,9 @@ interface ChartProps {
 
 export default function TwentyFourHourChart({ data }: ChartProps) {
   return (
-    <div className="w-full h-64 flex flex-col px-4 py-2">
+    <div className="w-full h-72 flex flex-col">
 
-      {/* Title */}
-      <h2 className="text-white text-xl font-semibold mb-3 tracking-wide">
+      <h2 className="text-white text-xl font-bold mb-3 tracking-wide drop-shadow">
         24-Hour Temperature Trend
       </h2>
 
@@ -29,49 +28,47 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
 
             <defs>
               <linearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4DBBFF" stopOpacity={0.9} />
-                <stop offset="95%" stopColor="#1A6FFF" stopOpacity={0.2} />
+                <stop offset="0%" stopColor="#4DBBFF" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#1A6FFF" stopOpacity={0.15} />
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.25)" />
+            <CartesianGrid
+              strokeDasharray="4 4"
+              stroke="rgba(255,255,255,0.25)"
+            />
 
             <XAxis
               dataKey="time"
-              stroke="rgba(255,255,255,0.9)"
-              style={{ fontSize: "12px" }}
-              interval={1}
-              tick={{ fill: "white" }}
+              interval={0}                     // show every tick
+              tick={{ fill: "white", fontSize: 12 }}
+              tickMargin={10}
             />
 
             <YAxis
-              stroke="rgba(255,255,255,0.9)"
-              style={{ fontSize: "12px" }}
-              domain={[0, "dataMax + 5"]}
-              tick={{ fill: "white" }}
+              domain={["dataMin - 2", "dataMax + 2"]}
+              tick={{ fill: "white", fontSize: 12 }}
             />
 
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(20,40,80,0.6)",
-                backdropFilter: "blur(12px)",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                backdropFilter: "blur(10px)",
                 border: "1px solid rgba(255,255,255,0.4)",
-                borderRadius: "12px",
+                borderRadius: "10px",
                 color: "white",
               }}
-              cursor={{ fill: "rgba(255,255,255,0.15)" }}
+              cursor={{ fill: "rgba(255,255,255,0.1)" }}
             />
 
             <Area
               type="monotone"
               dataKey="temp"
-              stroke="#3EA8FF"
+              stroke="#36A2FF"
               strokeWidth={3}
               fill="url(#gradientFill)"
-              isAnimationActive={true}
-              animationDuration={1200}
+              animationDuration={1000}
             />
-
           </AreaChart>
         </ResponsiveContainer>
       </div>
