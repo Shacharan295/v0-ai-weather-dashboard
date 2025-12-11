@@ -25,7 +25,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   // ⭐ 1. Domain padding
   // ---------------------------------------------------------
   const minY = Math.floor(minTemp - 1);
-  const maxY = Math.ceil(maxTemp + 1);
+  let maxY = Math.ceil(maxTemp + 1);
 
   // ---------------------------------------------------------
   // ⭐ 2. Calculate a "nice" step (always even spacing)
@@ -35,7 +35,13 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   const step = Math.max(1, Math.round(roughStep)); // integer step, never 0
 
   // ---------------------------------------------------------
-  // ⭐ 3. Build the tick list (integer, evenly spaced)
+  // ⭐ 3. Snap maxY to align with step (fix uneven last tick)
+  // ---------------------------------------------------------
+  const alignedMaxY = minY + step * 4;
+  maxY = alignedMaxY;
+
+  // ---------------------------------------------------------
+  // ⭐ 4. Build the tick list (integer, evenly spaced)
   // ---------------------------------------------------------
   const ticks = [
     minY,
