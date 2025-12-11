@@ -21,18 +21,18 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
-  // ⭐ slightly better domain padding (cleaner spacing)
-  const minY = Math.floor(minTemp - 0.8);
-  const maxY = Math.ceil(maxTemp + 1.2);
+  // Slight domain padding
+  const minY = Math.floor(minTemp - 1);
+  const maxY = Math.ceil(maxTemp + 1);
 
-  // ⭐ EVEN spacing with accurate tick rounding
+  // EVEN integer ticks — no decimals
   const ticks = [
     minY,
     minY + (maxY - minY) * 0.25,
     minY + (maxY - minY) * 0.5,
     minY + (maxY - minY) * 0.75,
     maxY,
-  ].map((v) => Number(v.toFixed(1))); // <-- FIXED
+  ].map((v) => Math.round(v)); // <-- integers only
 
   return (
     <div className="w-full h-72 flex flex-col">
@@ -70,7 +70,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             domain={[minY, maxY]}
             ticks={ticks}
             stroke="rgba(255,255,255,0.9)"
-            allowDecimals={true}  // allow 1 decimal when needed
+            allowDecimals={false}
             style={{ fontSize: "13px" }}
             tickMargin={8}
             width={40}
