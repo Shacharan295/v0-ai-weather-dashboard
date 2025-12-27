@@ -30,6 +30,15 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
     return "🌤️"
   }
 
+  const formattedDate = new Date(data.local_time)
+    .toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+    .replace(/,/g, "")
+
   return (
     <div className="
       bg-white/15
@@ -51,7 +60,7 @@ export default function CurrentWeather({ data }: CurrentWeatherProps) {
 
         <div>
           <h2 className="text-white/70 text-sm uppercase tracking-wide">Time</h2>
-          <p className="text-white text-lg">{data.local_time}</p>
+          <p className="text-white text-lg">{formattedDate}</p>
         </div>
       </div>
 
