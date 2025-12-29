@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SearchBox from "@/components/SearchBox";
 import CurrentWeather from "@/components/current-weather";
 import ForecastCards from "@/components/forecast-cards";
@@ -34,14 +34,21 @@ function getEmoji(desc: string) {
 
 export default function WeatherDashboard() {
   const [weatherData, setWeatherData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // ⭐ changed initial value
   const [currentCity, setCurrentCity] = useState("New York");
   const [suggestions, setSuggestions] = useState<string[] | null>(null);
+
+  // ⭐ flicker control flag (ONLY addition)
+  const isInitialLoad = useRef(true);
 
   // ⭐ Fetch weather
   async function fetchWeather(city: string) {
     try {
-      setLoading(true);
+      // ⭐ prevent loading flash on first mount
+      if (!isInitialLoad.current) {
+        setLoading(true);
+      }
+
       setSuggestions(null);
 
       const res = await fetch(
@@ -54,10 +61,10 @@ export default function WeatherDashboard() {
         setWeatherData(null);
         setSuggestions(data.suggestions);
         setLoading(false);
+        isInitialLoad.current = false;
         return;
       }
 
-      // Fix forecast formatting + emojis
       const fixedForecast = data.forecast.map((f: any) => ({
         day: f.day,
         temp: f.temp,
@@ -68,9 +75,11 @@ export default function WeatherDashboard() {
       setWeatherData({ ...data, forecast: fixedForecast });
       setCurrentCity(city);
       setLoading(false);
+      isInitialLoad.current = false;
     } catch (err) {
       console.error("Weather API failed:", err);
       setLoading(false);
+      isInitialLoad.current = false;
     }
   }
 
@@ -161,7 +170,6 @@ export default function WeatherDashboard() {
         <SearchBox onSearch={fetchWeather} />
       </div>
 
-      {/* Suggestions */}
       {suggestions && (
         <div className="max-w-7xl mx-auto text-white mb-6">
           <p className="text-lg mb-2">Did you mean:</p>
@@ -179,7 +187,6 @@ export default function WeatherDashboard() {
         </div>
       )}
 
-      {/* Loading */}
       {loading ? (
         <div className="max-w-7xl mx-auto animate-pulse space-y-6">
           <div className="h-64 bg-white/20 rounded-2xl" />
@@ -191,7 +198,6 @@ export default function WeatherDashboard() {
         </div>
       ) : weatherData ? (
         <>
-          {/* Main Weather Layout */}
           <div className="max-w-7xl mx-auto space-y-10">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div>
@@ -201,7 +207,6 @@ export default function WeatherDashboard() {
               <div className="lg:col-span-2 flex flex-col gap-8">
                 <ForecastCards forecast={weatherData.forecast} />
 
-                {/* ⭐ Frosted 24-hour chart */}
                 <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
                   <div className="h-72">
                     <TwentyFourHourChart data={hourlyData} />
