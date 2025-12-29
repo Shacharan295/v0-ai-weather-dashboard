@@ -17,7 +17,24 @@ interface ChartProps {
 export default function TwentyFourHourChart({ data }: ChartProps) {
   if (!data || data.length === 0) return null;
 
-  const temps = data.map((d) => d.temp);
+  // ---------------------------------------------------------
+  // ⭐ ONLY CHANGE: Light smoothing for better visuals
+  // ---------------------------------------------------------
+  const smoothTemps = (data: { time: string; temp: number }[]) => {
+    return data.map((d, i, arr) => {
+      if (i === 0 || i === arr.length - 1) return d;
+      return {
+        ...d,
+        temp: Number(
+          ((arr[i - 1].temp + d.temp + arr[i + 1].temp) / 3).toFixed(1)
+        ),
+      };
+    });
+  };
+
+  const smoothData = smoothTemps(data);
+
+  const temps = smoothData.map((d) => d.temp);
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
 
@@ -54,12 +71,12 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   return (
     <div className="w-full h-72 flex flex-col">
       <h2 className="text-white text-xl font-semibold mb-3 tracking-wide">
-         Temperature Trend
+        Temperature Trend
       </h2>
 
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          data={data}
+          data={smoothData}
           margin={{ top: 10, right: 30, left: 30, bottom: 10 }}
         >
           <defs>
