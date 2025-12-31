@@ -230,8 +230,9 @@ export default function WeatherDashboard() {
         </>
       ) : (
         <div className="max-w-7xl mx-auto text-white text-center text-xl">
-         <<<<<< LOADING >>>>>>
-        </div>
+  {"<<<<<< LOADING >>>>>>"}
+</div>
+
       )}
     </main>
   );
