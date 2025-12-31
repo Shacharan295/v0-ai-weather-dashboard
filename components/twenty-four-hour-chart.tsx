@@ -92,7 +92,7 @@ export default function TwentyFourHourChart({
   return (
     <div className="w-full h-72 flex flex-col">
       <h2 className="text-white text-xl font-semibold mb-3">
-        Temperature Trend (Today)
+        Temperature Trend 
       </h2>
 
       <ResponsiveContainer width="100%" height="100%">
