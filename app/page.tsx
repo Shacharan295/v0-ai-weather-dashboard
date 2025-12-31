@@ -84,13 +84,8 @@ export default function WeatherDashboard() {
     fetchWeather(currentCity);
   }, []);
 
-  const hourlyData =
-    weatherData?.hourly
-      ?.sort((a: any, b: any) => {
-        const t1 = parseInt(a.time.replace(":", ""));
-        const t2 = parseInt(b.time.replace(":", ""));
-        return t1 - t2;
-      }) || [];
+  // ⭐ ONLY CHANGE IS HERE (NO SORTING, NO TIME STRINGS)
+  const hourlyData = weatherData?.hourly || [];
 
   const guideForUI = weatherData
     ? {
