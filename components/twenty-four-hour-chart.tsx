@@ -33,6 +33,9 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
 
   const smoothData = smoothTemps(data);
 
+  // ⭐⭐⭐ ONLY ADDITION (X-axis must match graph data)
+  const xTicks = smoothData.map((d) => d.dt);
+
   const temps = smoothData.map((d) => d.temp);
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
@@ -91,10 +94,11 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             vertical={false}
           />
 
-          {/* ⭐ ONLY FIX: Use dt instead of string time */}
+          {/* ⭐ ONLY FIX: X-axis ticks come from actual graph data */}
           <XAxis
             dataKey="dt"
             type="number"
+            ticks={xTicks}
             domain={["dataMin", "dataMax"]}
             stroke="rgba(255,255,255,0.9)"
             style={{ fontSize: "13px" }}
