@@ -230,7 +230,7 @@ export default function WeatherDashboard() {
         </>
       ) : (
         <div className="max-w-7xl mx-auto text-white text-center text-xl">
-          Could not load weather data.
+         <<<<<< LOADING >>>>>>
         </div>
       )}
     </main>
