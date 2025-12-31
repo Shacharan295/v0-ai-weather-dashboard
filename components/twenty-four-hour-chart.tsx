@@ -11,9 +11,13 @@ import {
 
 interface ChartProps {
   data: { dt: number; temp: number }[];
+  timezoneOffset: number; // ⭐ ONLY ADDITION
 }
 
-export default function TwentyFourHourChart({ data }: ChartProps) {
+export default function TwentyFourHourChart({
+  data,
+  timezoneOffset,
+}: ChartProps) {
   if (!data || data.length === 0) return null;
 
   // ---------------------------------------------------------
@@ -33,9 +37,8 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
 
   const smoothData = smoothTemps(data);
 
-  // ⭐⭐⭐ ONLY ADDITION (X-axis must match graph data)
+  // ⭐ X-axis ticks from graph data (excluding current)
   const xTicks = smoothData.slice(1).map((d) => d.dt);
-
 
   const temps = smoothData.map((d) => d.temp);
   const minTemp = Math.min(...temps);
@@ -48,7 +51,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   let maxY = Math.ceil(maxTemp + 1);
 
   // ---------------------------------------------------------
-  // ⭐ 2. Calculate a "nice" step (always even spacing)
+  // ⭐ 2. Calculate a "nice" step
   // ---------------------------------------------------------
   const range = maxY - minY;
   const roughStep = range / 4;
@@ -61,7 +64,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
   maxY = alignedMaxY;
 
   // ---------------------------------------------------------
-  // ⭐ 4. Build the tick list
+  // ⭐ 4. Build Y ticks
   // ---------------------------------------------------------
   const ticks = [
     minY,
@@ -95,7 +98,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             vertical={false}
           />
 
-          {/* ⭐ ONLY FIX: X-axis ticks come from actual graph data */}
+          {/* ⭐ ONLY REAL FIX: apply city timezone */}
           <XAxis
             dataKey="dt"
             type="number"
@@ -106,7 +109,7 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
             interval={0}
             tickMargin={8}
             tickFormatter={(dt) =>
-              new Date(dt * 1000).toLocaleTimeString([], {
+              new Date((dt + timezoneOffset) * 1000).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })
@@ -125,7 +128,9 @@ export default function TwentyFourHourChart({ data }: ChartProps) {
 
           <Tooltip
             labelFormatter={(dt) =>
-              new Date(Number(dt) * 1000).toLocaleTimeString([], {
+              new Date(
+                (Number(dt) + timezoneOffset) * 1000
+              ).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })
